@@ -114,7 +114,7 @@ public class ListPath extends JFrame {
 
         footer = new JXPanel(null);
         footer.setBounds(0, HEIGHT - 80, WIDTH, 80);
-        footer.setBackground(Color.CYAN);
+        footer.setBackground(new Color(40, 44, 52));
 
         myTree.setCellRenderer(new MyTreeCellRenderer());
         myTree.setFont(new Font("Segoe UI", Font.PLAIN, 15));
@@ -328,7 +328,7 @@ public class ListPath extends JFrame {
 
     private void generateTextEditorFeatures() {
         TextEditorFeatures = new JXPanel(null);
-        TextEditorFeatures.setBounds(0, 0, getWidth(), 100);
+        TextEditorFeatures.setBounds(0, 0, WIDTH, 100);
         TextEditorFeatures.setBackground(new Color(0xadadad));
 
         JXLabel title = new JXLabel("Text Editor");

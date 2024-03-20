@@ -38,10 +38,6 @@ public class MyRSyntaxArea extends RSyntaxTextArea {
         });
     }
 
-    public void setTextArea(String text) {
-        textArea.setText(text);
-    }
-
     public RTextScrollPane getSp() {
         return sp;
     }
@@ -50,47 +46,25 @@ public class MyRSyntaxArea extends RSyntaxTextArea {
         return textArea;
     }
 
+    public void setTextArea(String text) {
+        textArea.setText(text);
+    }
+
     public void setSyntaxStyle(String fileExtension) {
         switch (fileExtension) {
-            case "java":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-                break;
-            case "c":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
-                break;
-            case "cpp":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);
-                break;
-            case "cs":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CSHARP);
-                break;
-            case "html":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
-                break;
-            case "css":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CSS);
-                break;
-            case "js":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
-                break;
-            case "php":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PHP);
-                break;
-            case "py":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
-                break;
-            case "rb":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_RUBY);
-                break;
-            case "sql":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SQL);
-                break;
-            case "xml":
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
-                break;
-            default:
-                textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
-                break;
+            case "java" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+            case "c" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+            case "cpp" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);
+            case "cs" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CSHARP);
+            case "html" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
+            case "css" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CSS);
+            case "js" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+            case "php" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PHP);
+            case "py" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+            case "rb" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_RUBY);
+            case "sql" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SQL);
+            case "xml" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_XML);
+            default -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
         }
     }
 
