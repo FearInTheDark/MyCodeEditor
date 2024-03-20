@@ -1,11 +1,11 @@
 package Converters;
 
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,14 +39,14 @@ public class SVGToIconConverter {
         }
     }
 
-    public static void main(String[] args) {
-        String svgFilePath = "src/icons/frame.svg";
-        String outputIconPath = "src/icons/output.png";
-        int width = 2000;
-        int height = 2000;
-        convertSvgToIcon(svgFilePath, outputIconPath, width, height);
-        File file = new File("src/icons/frame.svg");
-        System.out.println(file.exists() ? "File exists" : "File not found");
-    }
+//    public static void main(String[] args) {
+//        String svgFilePath = "src/icons/icons_svg/java.svg";
+//        String outputIconPath = "src/icons/java.png";
+//        int width = 100;
+//        int height = 100;
+//        convertSvgToIcon(svgFilePath, outputIconPath, width, height);
+//        File file = new File("src/icons/frame.svg");
+//        System.out.println(file.exists() ? "File exists" : "File not found");
+//    }
 }
 

@@ -15,7 +15,6 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
         ImageIcon fileII = new ImageIcon("src/icons/file.png");
         Image fileImage = fileII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         fileIcon = new ImageIcon(fileImage);
-
     }
 
 
