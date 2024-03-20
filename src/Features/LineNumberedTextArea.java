@@ -1,4 +1,4 @@
-package Samples;
+package Features;
 
 import CustomizeUI.MyScrollBarUI;
 
@@ -11,42 +11,44 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LineNumberedTextArea extends JFrame {
+public class LineNumberedTextArea extends Component {
 
     private JTextArea textArea;
     private JTextArea lineNumberArea;
     private JScrollPane scrollPane;
 
     public LineNumberedTextArea() {
-        setTitle("Line Numbered JTextArea");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+//        setTitle("Line Numbered JTextArea");
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        setSize(400, 300);
         initComponents();
-        setVisible(true);
+//        setVisible(true);
     }
 
 
     private void initComponents() {
         textArea = new JTextArea();
-        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 12));
+        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         textArea.setMargin(new Insets(10, 10, 10, 10));
 
         lineNumberArea = new JTextArea("1\n");
         lineNumberArea.setBackground(Color.LIGHT_GRAY);
-//        lineNumberArea.setEditable(false);
-//        lineNumberArea.setFocusable(false);
+        lineNumberArea.setEditable(false);
+        lineNumberArea.setFocusable(false);
         lineNumberArea.setMargin(new Insets(10, 10, 10, 10));
-        lineNumberArea.setFont(new Font("JetBrains Mono", Font.BOLD, 12));
+        lineNumberArea.setFont(new Font("JetBrains Mono", Font.BOLD, 14));
         lineNumberArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    int lineNumber = lineNumberArea.getLineOfOffset(lineNumberArea.viewToModel(e.getPoint()));
+                    int lineNumber = lineNumberArea.getLineOfOffset(lineNumberArea.viewToModel2D(e.getPoint()));
                     Element root = textArea.getDocument().getDefaultRootElement();
-                    Element lineElement = root.getElement(lineNumber);
-                    int startOffset = lineElement.getStartOffset();
-                    int endOffset = lineElement.getEndOffset();
-                    textArea.select(startOffset, endOffset - 1);
+                    if (lineNumber < root.getElementCount()) {
+                        Element lineElement = root.getElement(lineNumber);
+                        int startOffset = lineElement.getStartOffset();
+                        int endOffset = lineElement.getEndOffset();
+                        textArea.select(startOffset, endOffset - 1);
+                    }
                 } catch (BadLocationException ex) {
                     System.out.println(ex.getMessage() + " at " + ex.getStackTrace()[0].toString());
                 }
@@ -78,26 +80,31 @@ public class LineNumberedTextArea extends JFrame {
             }
         });
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
+//        getContentPane().setLayout(new BorderLayout());
+//        getContentPane().add(scrollPane, BorderLayout.CENTER);
     }
 
 
     private void updateLineNumbers() {
         int caretPosition = textArea.getDocument().getLength();
         Element root = textArea.getDocument().getDefaultRootElement();
-        String text = "1\n";
+        StringBuilder text = new StringBuilder("1\n");
         for (int i = 2; i < root.getElementIndex(caretPosition) + 2; i++) {
-            text += i + "\n";
+            text.append(i).append("\n");
         }
-        lineNumberArea.setText(text);
+        lineNumberArea.setText(text.toString());
     }
-//    public static void main(String[] args) {
-//        new LineNumberedTextArea();
-//    }
 
-    public static JScrollPane getScrollPane() {
-        return new LineNumberedTextArea().scrollPane;
+    public void setTextArea(String text) {
+        this.textArea.setText(text);
+    }
+
+    public JScrollPane getScrollPane() {
+        return this.scrollPane;
+    }
+
+    public JTextArea getTextArea() {
+        return this.textArea;
     }
 }
 

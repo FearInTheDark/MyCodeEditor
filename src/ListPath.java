@@ -1,44 +1,50 @@
 import CustomizeUI.MyScrollBarUI;
 import CustomizeUI.MySplitPaneUI;
 import CustomizeUI.MyTreeCellRenderer;
-import Samples.LineNumberedTextArea;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import Features.LineNumberedTextArea;
+import Features.MyRSyntaxArea;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTree;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+
+import static Features.Features.getFileExtension;
+import static Features.Features.getFullPath;
 
 public class ListPath extends JFrame {
     private JXTree myTree;
     private DefaultMutableTreeNode root;
     private JSplitPane splitPane;
-    private JScrollPane explorerPane, editorPane, textAreaScrollPane;
-    private JTextPane textArea;
-    private RSyntaxTextArea syntaxTextArea;
+    private JScrollPane explorerPane;
+    private JTextPane textPane;
+    private Object currentRightComponent;
+    private MyRSyntaxArea syntaxTextArea;
     private JXPanel header;
     private JXPanel fileExplorerFeatures, TextEditorFeatures, footer;
+    private LineNumberedTextArea editorPane;
+    private final String ROOT_FOLDER = "Learning Course";
     private int WIDTH = 1200, HEIGHT = 850;
+    private JToolTip toolTip;
+    private File selectedFile;
 
     public ListPath() throws Exception {
         root = new DefaultMutableTreeNode("D:");
         myTree = new JXTree(root);
-        Path rootPath = Paths.get("D:", "Java Learning");
-        listAllFiles(rootPath, root);
+        selectedFile = null;
 
+        Path rootPath = Paths.get("D:", ROOT_FOLDER);
+        listAllFiles(rootPath, root);
 
         setTitle("My File Explorer");
         setIconImage(new ImageIcon("src/icons/frame.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
@@ -54,6 +60,7 @@ public class ListPath extends JFrame {
                 super.componentResized(e);
                 WIDTH = getWidth();
                 HEIGHT = getHeight();
+                header.setBounds(0, 0, getWidth(), 100);
                 splitPane.setBounds(0, 100, getWidth(), getHeight() - 180);
                 footer.setBounds(0, getHeight() - 80, getWidth(), 80);
             }
@@ -82,9 +89,10 @@ public class ListPath extends JFrame {
         generateFileExplorerFeatures();
         generateTextEditorFeatures();
         generateEditorPane();
-        generateTextArea();
+        generateTextPane();
+        generateRSyntaxTextArea();
         this.header = fileExplorerFeatures;
-
+        currentRightComponent = editorPane;
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 //        splitPane.setDividerLocation(150);
@@ -102,7 +110,7 @@ public class ListPath extends JFrame {
 
 
         splitPane.setLeftComponent(explorerPane);
-        splitPane.setRightComponent(textArea);
+        splitPane.setRightComponent(textPane);
 
         footer = new JXPanel(null);
         footer.setBounds(0, HEIGHT - 80, WIDTH, 80);
@@ -118,20 +126,42 @@ public class ListPath extends JFrame {
                 super.mouseClicked(e);
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
                 if (e.getClickCount() == 2) {
-                    if (node == null) return;
-                    Object nodeInfo = node.getUserObject();
-                    // If folder return
-                    File file = new File(nodeInfo.toString());
-                    if (file.isDirectory()) return;
-                    splitPane.setRightComponent(editorPane);
-                    textArea.setText(nodeInfo.toString());
-                    System.out.println(Arrays.toString(node.getPath()));
+                    try {
+                        if (node == null) return;
+                        String filePath = getFullPath(node, ROOT_FOLDER);
+//                        System.out.println(filePath);
+                        selectedFile = new File(filePath);
+                        System.out.print(selectedFile.isFile() ? "File - " : "Directory - " + selectedFile.getName() + "\n");
+                        if (selectedFile.isFile()) {
+                            String fileExtension = getFileExtension(selectedFile.getName());
+                            System.out.println("File Extension: " + fileExtension);
+                            syntaxTextArea.setSyntaxStyle(fileExtension);
+                            if (splitPane.getRightComponent() == textPane) {
+                                splitPane.setRightComponent(editorPane.getScrollPane());
+                            }
+                            String textContent = Files.readString(selectedFile.toPath());
+                            if (currentRightComponent == editorPane) {
+                                editorPane.setTextArea(textContent);
+                            } else {
+                                syntaxTextArea.setTextArea(textContent);
+                            }
+                        }
+                    } catch (IOException ioException) {
+                        System.err.println("Error: " + ioException.getMessage());
+
+                    }
                 }
                 if (SwingUtilities.isRightMouseButton(e)) {
                     if (node == null) return;
                     JPopupMenu popupMenu = new JPopupMenu();
                     popupMenu.setPreferredSize(new Dimension(100, 100));
                     JMenuItem open = getjMenuItem("Open");
+                    open.addActionListener(e1 -> {
+                        selectedFile = new File(node.getUserObject().toString());
+                        if (selectedFile.isDirectory()) return;
+                        if (splitPane.getRightComponent() != editorPane)
+                            splitPane.setRightComponent(editorPane.getScrollPane());
+                    });
                     JMenuItem delete = getjMenuItem("Delete");
                     JMenuItem rename = getjMenuItem("Rename");
                     popupMenu.add(open);
@@ -147,32 +177,64 @@ public class ListPath extends JFrame {
         addJMenuBar();
     }
 
-    private void generateTextArea() {
-        textArea = new JTextPane();
-        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 15));
-        textArea.setForeground(new Color(0xFFFFFF));
-        textArea.setMargin(new Insets(10, 10, 10, 10));
-        textArea.setMinimumSize(new Dimension(150, 0));
-//        textArea.setLineWrap(true);
-//        textArea.setWrapStyleWord(true);
-//        textArea.setUI(new MyTextAreaUI());
-        textArea.setContentType("text/html");
-        // Welcome by a html formatted text
-        // Text Align center, font size 30, font family Comic Sans MS, red color
+
+    //These methods are used to generate the components of the UI
+    private void generateTextPane() {
+        textPane = new JTextPane();
+        textPane.setFont(new Font("JetBrains Mono", Font.PLAIN, 15));
+        textPane.setForeground(new Color(0xFFFFFF));
+        textPane.setMargin(new Insets(10, 10, 10, 10));
+        textPane.setMinimumSize(new Dimension(150, 0));
+        textPane.setContentType("text/html");
+        textPane.setFocusable(false);
+        textPane.setEditable(false);
         String htmlString = "<html><body><h1 style='color: red; font-family: Segoe UI; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 20px; color: blue;'>This is a paragraph.</p></body></html>";
-        textArea.setText(htmlString);
-        textArea.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
+        textPane.setText(htmlString);
+
+//        textPane.addFocusListener(new FocusAdapter() {
+//            public void focusGained(FocusEvent evt) {
+//                remove(header);
+//                header = TextEditorFeatures;
+//                add(header);
+//                textPane.setSelectionStart(0);
+//                textPane.setSelectionEnd(textPane.getText().length());
+//                repaint();
+//                revalidate();
+//            }
+//
+//            public void focusLost(FocusEvent evt) {
+//                remove(header);
+//                header = fileExplorerFeatures;
+//                add(header);
+//                repaint();
+//                revalidate();
+//            }
+//        });
+    }
+
+    private void generateEditorPane() {
+        this.editorPane = new LineNumberedTextArea();
+        editorPane.setMinimumSize(new Dimension(150, 0));
+        addFocus(editorPane.getTextArea());
+    }
+
+    private void generateRSyntaxTextArea() {
+        syntaxTextArea = new MyRSyntaxArea();
+        syntaxTextArea.setSyntaxEditingStyle("text/java");
+        addFocus(syntaxTextArea.getTextArea());
+    }
+
+    private void addFocus(JTextComponent textComponent) {
+        textComponent.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent evt) {
                 remove(header);
                 header = TextEditorFeatures;
                 add(header);
-                textArea.setSelectionStart(0);
-                textArea.setSelectionEnd(textArea.getText().length());
                 repaint();
                 revalidate();
             }
 
-            public void focusLost(java.awt.event.FocusEvent evt) {
+            public void focusLost(FocusEvent evt) {
                 remove(header);
                 header = fileExplorerFeatures;
                 add(header);
@@ -182,19 +244,14 @@ public class ListPath extends JFrame {
         });
     }
 
-    private void generateEditorPane() {
-        this.editorPane = LineNumberedTextArea.getScrollPane();
-        editorPane.setMinimumSize(new Dimension(150, 0));
-    }
-
-
     private void addJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         String[] fileItems = {"New", "Open", "Save", "Save As", "Exit"};
         String[] editItems = {"Undo", "Redo", "Cut", "Copy", "Paste", "Delete", "Find", "Replace"};
-        String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen"};
+        String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen", "Set Editor"};
         String[] helpItems = {"About", "Contact"};
+
         JMenu fileMenu = getJMenu("File", fileItems);
         JMenu edit = getJMenu("Edit", editItems);
         JMenu view = getJMenu("View", viewItems);
@@ -226,9 +283,18 @@ public class ListPath extends JFrame {
         item.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
         item.setBorder(null);
-        item.addActionListener(e -> {
-            if (name.equals("Exit")) System.exit(0);
-        });
+        switch (name) {
+            case "Exit" -> item.addActionListener(e -> System.exit(0));
+            case "Set Editor" -> item.addActionListener(e -> {
+                if (currentRightComponent == syntaxTextArea) {
+                    splitPane.setRightComponent(editorPane.getScrollPane());
+                    currentRightComponent = editorPane;
+                } else {
+                    splitPane.setRightComponent(syntaxTextArea.getSp());
+                    currentRightComponent = syntaxTextArea;
+                }
+            });
+        }
         return item;
     }
 
@@ -243,6 +309,19 @@ public class ListPath extends JFrame {
         title.setBounds(0, 0, 300, 100);
         title.setFont(new Font("Comic Sans MS", Font.BOLD, 30));
         title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setToolTipText("<html><span style='font-family: Segoe UI'>This is a tooltip</span></html>");
+
+        title.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+            }
+        });
 
         fileExplorerFeatures.add(title);
     }
