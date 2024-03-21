@@ -19,7 +19,7 @@ public class SVGIconExample {
             frame.setSize(300, 200);
 
             // Load SVG file and convert it to BufferedImage
-            BufferedImage svgImage = loadSVGImage("src/icons/frame.svg", 1000, 1000); // Change the dimensions as needed
+            BufferedImage svgImage = loadSVGImage("src/icons/icons_svg/3d.svg", 1000, 1000); // Change the dimensions as needed
             if (svgImage == null) {
                 System.err.println("Failed to load SVG image");
                 return;
