@@ -33,7 +33,6 @@ public class ListPath extends JFrame {
     private LineNumberedTextArea editorPane;
     private String textContent;
     private int WIDTH = 1200, HEIGHT = 850;
-    private JToolTip toolTip;
     private File selectedFile;
 
     public ListPath() throws Exception {
