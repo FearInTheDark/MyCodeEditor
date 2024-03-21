@@ -22,18 +22,18 @@ import static Features.Features.*;
 
 public class ListPath extends JFrame {
     private final String ROOT_FOLDER = "Learning Course";
-    private JXTree myTree;
+    private final JXTree myTree;
     private DefaultMutableTreeNode root;
     private JSplitPane splitPane;
     private JScrollPane explorerPane;
     private JTextPane textPane;
+    private Object currentRightComponent;
     private MyRSyntaxArea syntaxTextArea;
     private JXLabel title;
     private JXPanel fileExplorerFeatures, TextEditorFeatures, header, footer;
     private LineNumberedTextArea editorPane;
     private String textContent;
     private int WIDTH = 1200, HEIGHT = 850;
-    private JToolTip toolTip;
     private File selectedFile;
 
     public ListPath() throws Exception {
@@ -78,6 +78,7 @@ public class ListPath extends JFrame {
         generateTextPane();
         generateRSyntaxTextArea();
         this.header = fileExplorerFeatures;
+        currentRightComponent = editorPane;
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
@@ -239,9 +240,6 @@ public class ListPath extends JFrame {
             JMenuItem menuItem = getjMenuItem(item);
             menu.add(menuItem);
         }
-//        menu.addSeparator();
-//        Dimension dimension = new Dimension(menu.getPreferredSize().width + 10, menu.getPreferredSize().height);
-//        menu.setPreferredSize(dimension);
         return menu;
     }
 
@@ -253,19 +251,19 @@ public class ListPath extends JFrame {
         switch (name) {
             case "Exit" -> item.addActionListener(e -> System.exit(0));
             case "Switch Editor" -> item.addActionListener(e -> {
-                if (splitPane.getRightComponent() == syntaxTextArea) {
-                    splitPane.setRightComponent(editorPane.getScrollPane());
+                if (currentRightComponent == syntaxTextArea) {
                     textContent = syntaxTextArea.getTextArea().getText();
+                    splitPane.setRightComponent(editorPane.getScrollPane());
                     editorPane.setTextArea(textContent);
+                    currentRightComponent = editorPane;
                 } else {
-                    splitPane.setRightComponent(syntaxTextArea.getSp());
                     textContent = editorPane.getTextArea().getText();
+                    splitPane.setRightComponent(syntaxTextArea.getSp());
                     syntaxTextArea.setTextArea(textContent);
+                    currentRightComponent = syntaxTextArea;
                 }
             });
-            case "About" -> item.addActionListener(e -> {
-                JOptionPane.showMessageDialog(null, "This is a simple text editor", "About", JOptionPane.INFORMATION_MESSAGE);
-            });
+            case "About" -> item.addActionListener(e -> JOptionPane.showMessageDialog(null, "This is a simple text editor", "About", JOptionPane.INFORMATION_MESSAGE));
             case "Full Screen" -> item.addActionListener(e -> {
                 if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
                     setExtendedState(JFrame.NORMAL);
@@ -323,7 +321,7 @@ public class ListPath extends JFrame {
     }
 
     private void setEditorContent(String textContent) {
-        if (splitPane.getRightComponent() == editorPane) {
+        if (currentRightComponent == editorPane) {
             editorPane.setTextArea(textContent);
         } else {
             syntaxTextArea.setTextArea(textContent);
