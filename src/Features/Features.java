@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class Features {
 
@@ -24,10 +25,18 @@ public class Features {
     }
 
     public static String getFileExtension(String fileName) {
+        if (Objects.equals(fileName, ".gitignore")) return "git";
         if (fileName.lastIndexOf(".") == -1 || fileName.lastIndexOf(".") == 0 || fileName.lastIndexOf(".") == fileName.length() - 1) {
             return "";
         }
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public static String fileNameWithoutExtension(String fileName) {
+        if (fileName.lastIndexOf(".") == -1 || fileName.lastIndexOf(".") == 0 || fileName.lastIndexOf(".") == fileName.length() - 1) {
+            return fileName;
+        }
+        return fileName.substring(0, fileName.lastIndexOf("."));
     }
 
 
@@ -42,5 +51,17 @@ public class Features {
             path.insert(0, node.getUserObject() + File.separator);
         }
         return path.toString();
+    }
+
+    public static boolean findByExtension(String extension, String[] extensions) {
+        for (String e : extensions) {
+            if (e.charAt(0) != extension.charAt(0)) {
+                return false;
+            }
+            if (e.equals(extension)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

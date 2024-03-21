@@ -4,9 +4,11 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.jdesktop.swingx.JXFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -14,12 +16,12 @@ public class SVGIconExample {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("SVG Icon Example");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            Window frame = new JXFrame();
             frame.setSize(300, 200);
 
+
             // Load SVG file and convert it to BufferedImage
-            BufferedImage svgImage = loadSVGImage("src/icons/icons_svg/3d.svg", 1000, 1000); // Change the dimensions as needed
+            BufferedImage svgImage = loadSVGImage("src/icons/icons_svg/audio.svg", 1000, 1000); // Change the dimensions as needed
             if (svgImage == null) {
                 System.err.println("Failed to load SVG image");
                 return;

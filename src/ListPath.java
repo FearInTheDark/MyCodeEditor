@@ -63,14 +63,6 @@ public class ListPath extends JFrame {
         show();
     }
 
-    private void resizeElements() {
-        WIDTH = getWidth();
-        HEIGHT = getHeight();
-        header.setBounds(0, 0, WIDTH, 100);
-        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
-        footer.setBounds(0, HEIGHT - 80, WIDTH, 20);
-    }
-
     private void initUI() {
         generateFileExplorerFeatures();
         generateTextEditorFeatures();
@@ -167,6 +159,7 @@ public class ListPath extends JFrame {
 
 
     //These methods are used to generate the components of the UI
+
     private void generateTextPane() {
         textPane = new JTextPane();
         textPane.setFont(new Font("JetBrains Mono", Font.PLAIN, 15));
@@ -179,7 +172,6 @@ public class ListPath extends JFrame {
         String htmlString = "<html><body><h1 style='color: red; font-family: Segoe UI; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 20px; color: blue;'>This is a paragraph.</p></body></html>";
         textPane.setText(htmlString);
     }
-
     private void generateEditorPane() {
         this.editorPane = new LineNumberedTextArea();
         editorPane.setMinimumSize(new Dimension(150, 0));
@@ -282,7 +274,7 @@ public class ListPath extends JFrame {
         fileExplorerFeatures.setBounds(0, 0, WIDTH, 100);
 
         title = new JXLabel("File Explorer");
-        ImageIcon icon = new ImageIcon("src/icons/frame.png");
+        ImageIcon icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\frame.png");
         title.setIcon(icon);
         title.setBounds(0, 0, 300, 100);
         title.setFont(new Font("Comic Sans MS", Font.BOLD, 30));
@@ -310,7 +302,7 @@ public class ListPath extends JFrame {
         TextEditorFeatures.setBackground(new Color(0xadadad));
 
         title = new JXLabel("Text Editor");
-        Image icon = new ImageIcon("src/icons/Acode.png").getImage().getScaledInstance(100, 100, Image.SCALE_AREA_AVERAGING);
+        Image icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\Acode.png").getImage().getScaledInstance(100, 100, Image.SCALE_AREA_AVERAGING);
         ImageIcon imageIcon = new ImageIcon(icon);
         title.setIcon(imageIcon);
         title.setBounds(0, 0, 300, 100);
@@ -318,6 +310,14 @@ public class ListPath extends JFrame {
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         TextEditorFeatures.add(title);
+    }
+
+    private void resizeElements() {
+        WIDTH = getWidth();
+        HEIGHT = getHeight();
+        header.setBounds(0, 0, WIDTH, 100);
+        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
+        footer.setBounds(0, HEIGHT - 80, WIDTH, 20);
     }
 
     private void setEditorContent(String textContent) {
