@@ -14,26 +14,24 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static Features.Features.getFileExtension;
-import static Features.Features.getFullPath;
+import static Features.Features.*;
 
 public class ListPath extends JFrame {
+    private final String ROOT_FOLDER = "Learning Course";
     private JXTree myTree;
     private DefaultMutableTreeNode root;
     private JSplitPane splitPane;
     private JScrollPane explorerPane;
     private JTextPane textPane;
-    private Object currentRightComponent;
     private MyRSyntaxArea syntaxTextArea;
-    private JXPanel header;
-    private JXPanel fileExplorerFeatures, TextEditorFeatures, footer;
+    private JXLabel title;
+    private JXPanel fileExplorerFeatures, TextEditorFeatures, header, footer;
     private LineNumberedTextArea editorPane;
-    private final String ROOT_FOLDER = "Learning Course";
+    private String textContent;
     private int WIDTH = 1200, HEIGHT = 850;
     private JToolTip toolTip;
     private File selectedFile;
@@ -58,31 +56,19 @@ public class ListPath extends JFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                WIDTH = getWidth();
-                HEIGHT = getHeight();
-                header.setBounds(0, 0, getWidth(), 100);
-                splitPane.setBounds(0, 100, getWidth(), getHeight() - 180);
-                footer.setBounds(0, getHeight() - 80, getWidth(), 80);
+                resizeElements();
             }
-
-
         });
         repaint();
         show();
     }
 
-    private static void listAllFiles(Path currentPath, DefaultMutableTreeNode parentNode) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(currentPath)) {
-            for (Path entry : stream) {
-                DefaultMutableTreeNode node = new DefaultMutableTreeNode(getLastPath(entry));
-                parentNode.add(node);
-                if (Files.isDirectory(entry)) listAllFiles(entry, node);
-            }
-        }
-    }
-
-    private static Object getLastPath(Path entry) {
-        return entry.getName(entry.getNameCount() - 1);
+    private void resizeElements() {
+        WIDTH = getWidth();
+        HEIGHT = getHeight();
+        header.setBounds(0, 0, WIDTH, 100);
+        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
+        footer.setBounds(0, HEIGHT - 80, WIDTH, 20);
     }
 
     private void initUI() {
@@ -92,12 +78,10 @@ public class ListPath extends JFrame {
         generateTextPane();
         generateRSyntaxTextArea();
         this.header = fileExplorerFeatures;
-        currentRightComponent = editorPane;
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-//        splitPane.setDividerLocation(150);
         splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
-//        splitPane.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        splitPane.setBorder(null);
 
         explorerPane = new JScrollPane(myTree);
         splitPane.setDividerSize(5);
@@ -113,7 +97,7 @@ public class ListPath extends JFrame {
         splitPane.setRightComponent(textPane);
 
         footer = new JXPanel(null);
-        footer.setBounds(0, HEIGHT - 80, WIDTH, 80);
+        footer.setBounds(0, HEIGHT - 80, WIDTH, 20);
         footer.setBackground(new Color(40, 44, 52));
 
         myTree.setCellRenderer(new MyTreeCellRenderer());
@@ -139,12 +123,8 @@ public class ListPath extends JFrame {
                             if (splitPane.getRightComponent() == textPane) {
                                 splitPane.setRightComponent(editorPane.getScrollPane());
                             }
-                            String textContent = Files.readString(selectedFile.toPath());
-                            if (currentRightComponent == editorPane) {
-                                editorPane.setTextArea(textContent);
-                            } else {
-                                syntaxTextArea.setTextArea(textContent);
-                            }
+                            textContent = Files.readString(selectedFile.toPath());
+                            setEditorContent(textContent);
                         }
                     } catch (IOException ioException) {
                         System.err.println("Error: " + ioException.getMessage());
@@ -157,10 +137,17 @@ public class ListPath extends JFrame {
                     popupMenu.setPreferredSize(new Dimension(100, 100));
                     JMenuItem open = getjMenuItem("Open");
                     open.addActionListener(e1 -> {
-                        selectedFile = new File(node.getUserObject().toString());
-                        if (selectedFile.isDirectory()) return;
-                        if (splitPane.getRightComponent() != editorPane)
-                            splitPane.setRightComponent(editorPane.getScrollPane());
+                        try {
+                            selectedFile = new File(getFullPath(node, ROOT_FOLDER));
+                            if (selectedFile.isDirectory()) return;
+                            textContent = Files.readString(selectedFile.toPath());
+                            if (splitPane.getRightComponent() == textPane) {
+                                splitPane.setRightComponent(editorPane.getScrollPane());
+                            }
+                            setEditorContent(textContent);
+                        } catch (IOException ioException) {
+                            System.err.println("Error: " + ioException.getMessage());
+                        }
                     });
                     JMenuItem delete = getjMenuItem("Delete");
                     JMenuItem rename = getjMenuItem("Rename");
@@ -190,26 +177,6 @@ public class ListPath extends JFrame {
         textPane.setEditable(false);
         String htmlString = "<html><body><h1 style='color: red; font-family: Segoe UI; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 20px; color: blue;'>This is a paragraph.</p></body></html>";
         textPane.setText(htmlString);
-
-//        textPane.addFocusListener(new FocusAdapter() {
-//            public void focusGained(FocusEvent evt) {
-//                remove(header);
-//                header = TextEditorFeatures;
-//                add(header);
-//                textPane.setSelectionStart(0);
-//                textPane.setSelectionEnd(textPane.getText().length());
-//                repaint();
-//                revalidate();
-//            }
-//
-//            public void focusLost(FocusEvent evt) {
-//                remove(header);
-//                header = fileExplorerFeatures;
-//                add(header);
-//                repaint();
-//                revalidate();
-//            }
-//        });
     }
 
     private void generateEditorPane() {
@@ -249,7 +216,7 @@ public class ListPath extends JFrame {
         menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         String[] fileItems = {"New", "Open", "Save", "Save As", "Exit"};
         String[] editItems = {"Undo", "Redo", "Cut", "Copy", "Paste", "Delete", "Find", "Replace"};
-        String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen", "Set Editor"};
+        String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen", "Switch Editor"};
         String[] helpItems = {"About", "Contact"};
 
         JMenu fileMenu = getJMenu("File", fileItems);
@@ -285,13 +252,27 @@ public class ListPath extends JFrame {
         item.setBorder(null);
         switch (name) {
             case "Exit" -> item.addActionListener(e -> System.exit(0));
-            case "Set Editor" -> item.addActionListener(e -> {
-                if (currentRightComponent == syntaxTextArea) {
+            case "Switch Editor" -> item.addActionListener(e -> {
+                if (splitPane.getRightComponent() == syntaxTextArea) {
                     splitPane.setRightComponent(editorPane.getScrollPane());
-                    currentRightComponent = editorPane;
+                    textContent = syntaxTextArea.getTextArea().getText();
+                    editorPane.setTextArea(textContent);
                 } else {
                     splitPane.setRightComponent(syntaxTextArea.getSp());
-                    currentRightComponent = syntaxTextArea;
+                    textContent = editorPane.getTextArea().getText();
+                    syntaxTextArea.setTextArea(textContent);
+                }
+            });
+            case "About" -> item.addActionListener(e -> {
+                JOptionPane.showMessageDialog(null, "This is a simple text editor", "About", JOptionPane.INFORMATION_MESSAGE);
+            });
+            case "Full Screen" -> item.addActionListener(e -> {
+                if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                    setExtendedState(JFrame.NORMAL);
+                    resizeElements();
+                } else {
+                    setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    resizeElements();
                 }
             });
         }
@@ -300,10 +281,9 @@ public class ListPath extends JFrame {
 
     private void generateFileExplorerFeatures() {
         fileExplorerFeatures = new JXPanel(null);
-        fileExplorerFeatures.setBounds(0, 0, getWidth(), 100);
-//        fileExplorerFeatures.setBackground(Color.CYAN);
+        fileExplorerFeatures.setBounds(0, 0, WIDTH, 100);
 
-        JLabel title = new JLabel("File Explorer");
+        title = new JXLabel("File Explorer");
         ImageIcon icon = new ImageIcon("src/icons/frame.png");
         title.setIcon(icon);
         title.setBounds(0, 0, 300, 100);
@@ -331,7 +311,7 @@ public class ListPath extends JFrame {
         TextEditorFeatures.setBounds(0, 0, WIDTH, 100);
         TextEditorFeatures.setBackground(new Color(0xadadad));
 
-        JXLabel title = new JXLabel("Text Editor");
+        title = new JXLabel("Text Editor");
         Image icon = new ImageIcon("src/icons/Acode.png").getImage().getScaledInstance(100, 100, Image.SCALE_AREA_AVERAGING);
         ImageIcon imageIcon = new ImageIcon(icon);
         title.setIcon(imageIcon);
@@ -340,5 +320,13 @@ public class ListPath extends JFrame {
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         TextEditorFeatures.add(title);
+    }
+
+    private void setEditorContent(String textContent) {
+        if (splitPane.getRightComponent() == editorPane) {
+            editorPane.setTextArea(textContent);
+        } else {
+            syntaxTextArea.setTextArea(textContent);
+        }
     }
 }

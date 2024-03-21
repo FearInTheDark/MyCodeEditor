@@ -1,3 +1,5 @@
+package Samples;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
