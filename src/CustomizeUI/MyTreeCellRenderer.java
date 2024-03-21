@@ -5,33 +5,29 @@ import Features.Features;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
-import java.util.Arrays;
+import java.io.File;
 
 public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
-    Icon folderIcon;
-    Icon fileIcon;
-    private final String folderPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folder.png";
+    private final String folderPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder.png";
+    private final String folderExpandPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder-open.png";
     private final String filePath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\file.png";
+    Icon folderIcon, folderExpandIcon;
+    Icon fileIcon;
     private String specialFiles = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\fileIcons\\";
-    private String[] extensions = {"3d", "abc", "ada", "android", "angular", "apollo", "applescript", "apps-script", "appveyor", "architecture", "arduino", "asciidoc", "assembly", "astro", "astyle", "audio", "aurelia", "authors", "auto", "autoit", "c", "chess", "chrome", "cmake", "coffee", "conduct", "console", "cpp", "credits", "crystal", "csharp", "css", "d", "dart", "database", "disc", "django", "dll", "docker", "document", "drawio", "drone", "email", "exe", "file", "firebase", "font", "forth", "fortran", "foxpro", "fsharp", "fusebox", "gamemaker", "gatsby", "gcp", "gemfile", "gemini", "git", "gitlab", "gitpod", "gleam", "go", "go-mod", "go_gopher", "godot", "godot-assets", "gradle", "grain", "graphcool", "graphql", "gridsome", "groovy", "grunt", "gulp", "h", "hack", "hardhat", "hcl", "hcl_light", "helm", "heroku", "hex", "hjson", "horusec", "hpp", "html", "http", "image", "jar", "java", "javaclass", "javascript", "jsconfig", "json", "kotlin", "laravel", "lib", "lock", "log", "nodejs", "npm", "objective-c", "objective-cpp", "openapi", "parcel", "pascal", "pdf", "perl", "php", "pinejs", "plastic", "powershell", "prettier", "python", "r", "raml", "react", "red", "replit", "riot", "ruby", "rust", "scala", "scheme", "search", "settings", "shader", "shaderlab", "silverstripe", "siyuan", "sketch", "slim", "slug", "sublime", "supabase", "svelte", "svg", "svgo", "svgr", "swagger", "swc", "swift", "syncpack", "table", "tailwindcss", "taskfile", "tauri", "tcl", "teal", "templ", "template", "terraform", "test-js", "test-jsx", "test-ts", "tex", "textlint", "tilt", "tldraw", "tldraw_light", "tobi", "tobimake", "todo", "travis", "tree", "tsconfig", "tune", "turborepo", "turborepo_light", "twig", "twine", "typescript", "typescript-def", "typst", "uml", "uml_light", "unocss", "url", "video", "vim", "visualstudio", "vite", "vscode", "vue", "xaml", "xml", "yaml", "yang", "zip"};
+    private String specialFolders = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\";
 
 
     public MyTreeCellRenderer() {
         ImageIcon folderII = new ImageIcon(folderPath);
         Image folderImage = folderII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         this.folderIcon = new ImageIcon(folderImage);
+        ImageIcon folderExpandII = new ImageIcon(folderExpandPath);
+        Image folderExpandImage = folderExpandII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        this.folderExpandIcon = new ImageIcon(folderExpandImage);
         ImageIcon fileII = new ImageIcon(filePath);
         Image fileImage = fileII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         fileIcon = new ImageIcon(fileImage);
-
-//        ImageIcon folderII = new ImageIcon(folderPath);
-//        Image folderImage = getScaledImage(folderII.getImage(), 20, 20);
-//        this.folderIcon = new ImageIcon(folderImage);
-//        ImageIcon fileII = new ImageIcon(filePath);
-//        Image fileImage = getScaledImage(fileII.getImage(), 20, 20);
-//        fileIcon = new ImageIcon(fileImage);
     }
-
 //    private Image getScaledImage(Image srcImg, int w, int h){
 //        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 //        Graphics2D g2 = resizedImg.createGraphics();
@@ -52,16 +48,28 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
         if (leaf) {
             String fileName = value.toString();
             String fileExtension = Features.getFileExtension(fileName);
-
-            if (Arrays.asList(extensions).contains(fileExtension)) {
+            if (new File(specialFiles + fileExtension + ".png").exists()) {
                 ImageIcon specialFileIcon = new ImageIcon(specialFiles + fileExtension + ".png");
-                Image specialFileImage = specialFileIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                Image specialFileImage = specialFileIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
                 setIcon(new ImageIcon(specialFileImage));
             } else {
                 setIcon(fileIcon);
             }
         } else {
-            setIcon(folderIcon);
+            String fileFolder = specialFolders + "folder-" + value + ".png";
+            if (new File(fileFolder).exists()) {
+                if (expanded) {
+                    String fileFolderExpanded = specialFolders + "folder-" + value + "-open.png";
+                    ImageIcon specialFolderIcon = new ImageIcon(fileFolderExpanded);
+                    Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+                    setIcon(new ImageIcon(specialFolderImage));
+                } else {
+                    ImageIcon specialFolderIcon = new ImageIcon(fileFolder);
+                    Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+                    setIcon(new ImageIcon(specialFolderImage));
+                }
+            } else if (expanded) setIcon(folderExpandIcon);
+            else setIcon(folderIcon);
         }
         if (sel) {
             String text = getText();

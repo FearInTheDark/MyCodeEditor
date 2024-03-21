@@ -10,6 +10,8 @@ import org.jdesktop.swingx.JXTree;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -35,13 +37,15 @@ public class ListPath extends JFrame {
     private String textContent;
     private int WIDTH = 1200, HEIGHT = 850;
     private File selectedFile;
+    private Path rootPath;
+    private TreePath[] selectedPaths;
 
     public ListPath() throws Exception {
         root = new DefaultMutableTreeNode("D:");
         myTree = new JXTree(root);
         selectedFile = null;
 
-        Path rootPath = Paths.get("D:", ROOT_FOLDER);
+        rootPath = Paths.get("D:", ROOT_FOLDER);
         listAllFiles(rootPath, root);
 
         setTitle("My File Explorer");
@@ -52,6 +56,7 @@ public class ListPath extends JFrame {
         setVisible(true);
         setLocationRelativeTo(null);
         initUI();
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -95,6 +100,8 @@ public class ListPath extends JFrame {
 
         myTree.setCellRenderer(new MyTreeCellRenderer());
         myTree.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        myTree.setLargeModel(true);
+        myTree.setClosedIcon(null);
         myTree.addTreeSelectionListener(e -> {
         });
         myTree.addMouseListener(new MouseAdapter() {
@@ -151,6 +158,88 @@ public class ListPath extends JFrame {
                 }
             }
         });
+        myTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+        myTree.addTreeSelectionListener(e -> selectedPaths = myTree.getSelectionPaths());
+        myTree.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                switch (e.getKeyChar()) {
+                    case KeyEvent.VK_ENTER -> {
+                        for (TreePath path : selectedPaths) {
+                            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                            try {
+                                selectedFile = new File(getFullPath(node, ROOT_FOLDER));
+                                if (selectedFile.isDirectory()) return;
+                                textContent = Files.readString(selectedFile.toPath());
+                                if (splitPane.getRightComponent() == textPane) {
+                                    splitPane.setRightComponent(editorPane.getScrollPane());
+                                }
+                                setEditorContent(textContent);
+                            } catch (IOException ioException) {
+                                System.err.println("Error: " + ioException.getMessage());
+                            }
+                        }
+                    }
+                    case KeyEvent.VK_DELETE -> {
+                        for (TreePath path : selectedPaths) {
+                            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                            try {
+                                selectedFile = new File(getFullPath(node, ROOT_FOLDER));
+                                int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + selectedFile.getName() + "?", "Delete", JOptionPane.YES_NO_OPTION);
+                                if (option == JOptionPane.NO_OPTION) return;
+                                Files.delete(selectedFile.toPath());
+                                DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
+                                parent.remove(node);
+                                myTree.updateUI();
+                            } catch (Exception ioException) {
+                                System.err.println("Error: " + ioException.getMessage());
+                            }
+                        }
+                    }
+                    case KeyEvent.VK_F2 -> {
+                        for (TreePath path : selectedPaths) {
+                            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                            try {
+                                selectedFile = new File(getFullPath(node, ROOT_FOLDER));
+                                String newName = JOptionPane.showInputDialog(null, "Enter new name for " + selectedFile.getName());
+//                                if (newName == null || newName.trim().isEmpty()) return;
+                                if (selectedFile.isDirectory()) {
+                                    Files.move(selectedFile.toPath(), selectedFile.toPath().resolveSibling(newName));
+                                } else {
+                                    String fileExtension = getFileExtension(selectedFile.getName());
+                                    Files.move(selectedFile.toPath(), selectedFile.toPath().resolveSibling(newName + "." + fileExtension));
+                                }
+                                node.setUserObject(newName);
+                                myTree.updateUI();
+                            } catch (Exception ioException) {
+                                System.err.println("Error: " + ioException.getMessage());
+                            }
+                        }
+                    }
+                    case KeyEvent.VK_F5 -> {
+                        try {
+                            root.removeAllChildren();
+                            listAllFiles(rootPath, root);
+                            myTree.updateUI();
+                            System.out.println("Refreshed");
+                        } catch (IOException ioException) {
+                            System.err.println("Error: " + ioException.getMessage());
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         add(header);
         add(splitPane);
         add(footer);
@@ -172,6 +261,7 @@ public class ListPath extends JFrame {
         String htmlString = "<html><body><h1 style='color: red; font-family: Segoe UI; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 20px; color: blue;'>This is a paragraph.</p></body></html>";
         textPane.setText(htmlString);
     }
+
     private void generateEditorPane() {
         this.editorPane = new LineNumberedTextArea();
         editorPane.setMinimumSize(new Dimension(150, 0));
@@ -190,6 +280,7 @@ public class ListPath extends JFrame {
                 remove(header);
                 header = TextEditorFeatures;
                 add(header);
+                resizeElements();
                 repaint();
                 revalidate();
             }
@@ -198,6 +289,7 @@ public class ListPath extends JFrame {
                 remove(header);
                 header = fileExplorerFeatures;
                 add(header);
+                resizeElements();
                 repaint();
                 revalidate();
             }
@@ -241,7 +333,25 @@ public class ListPath extends JFrame {
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
         item.setBorder(null);
         switch (name) {
+            case "About" ->
+                    item.addActionListener(e -> JOptionPane.showMessageDialog(null, "This is a simple text editor", "About", JOptionPane.INFORMATION_MESSAGE));
+            case "Copy" -> item.addActionListener(e -> {
+                if (currentRightComponent == editorPane) {
+                    editorPane.getTextArea().copy();
+                } else {
+                    syntaxTextArea.getTextArea().copy();
+                }
+            });
             case "Exit" -> item.addActionListener(e -> System.exit(0));
+            case "Full Screen" -> item.addActionListener(e -> {
+                if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                    setExtendedState(JFrame.NORMAL);
+                    resizeElements();
+                } else {
+                    setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    resizeElements();
+                }
+            });
             case "Switch Editor" -> item.addActionListener(e -> {
                 if (currentRightComponent == syntaxTextArea) {
                     textContent = syntaxTextArea.getTextArea().getText();
@@ -253,16 +363,6 @@ public class ListPath extends JFrame {
                     splitPane.setRightComponent(syntaxTextArea.getSp());
                     syntaxTextArea.setTextArea(textContent);
                     currentRightComponent = syntaxTextArea;
-                }
-            });
-            case "About" -> item.addActionListener(e -> JOptionPane.showMessageDialog(null, "This is a simple text editor", "About", JOptionPane.INFORMATION_MESSAGE));
-            case "Full Screen" -> item.addActionListener(e -> {
-                if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
-                    setExtendedState(JFrame.NORMAL);
-                    resizeElements();
-                } else {
-                    setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    resizeElements();
                 }
             });
         }

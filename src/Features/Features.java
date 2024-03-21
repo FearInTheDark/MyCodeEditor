@@ -1,6 +1,7 @@
 package Features;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -24,6 +25,10 @@ public class Features {
         return entry.getName(entry.getNameCount() - 1);
     }
 
+    public static Object getLastPath(TreePath entry) {
+        return entry.getLastPathComponent();
+    }
+
     public static String getFileExtension(String fileName) {
         if (Objects.equals(fileName, ".gitignore")) return "git";
         if (fileName.lastIndexOf(".") == -1 || fileName.lastIndexOf(".") == 0 || fileName.lastIndexOf(".") == fileName.length() - 1) {
@@ -39,8 +44,6 @@ public class Features {
         return fileName.substring(0, fileName.lastIndexOf("."));
     }
 
-
-    // TODO: Implement the getFullPath method
     public static String getFullPath(DefaultMutableTreeNode node, String ROOT_FOLDER) {
         StringBuilder path = new StringBuilder();
         path.append(node.getUserObject());
@@ -53,15 +56,11 @@ public class Features {
         return path.toString();
     }
 
-    public static boolean findByExtension(String extension, String[] extensions) {
-        for (String e : extensions) {
-            if (e.charAt(0) != extension.charAt(0)) {
-                return false;
-            }
-            if (e.equals(extension)) {
-                return true;
-            }
+    public static String getFullPath(TreePath path) {
+        StringBuilder fullPath = new StringBuilder();
+        for (Object node : path.getPath()) {
+            fullPath.append(node).append(File.separator);
         }
-        return false;
+        return fullPath.toString();
     }
 }
