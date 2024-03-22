@@ -10,8 +10,8 @@ import java.awt.event.KeyEvent;
 
 public class MyRSyntaxArea extends RSyntaxTextArea {
 
-    private RSyntaxTextArea textArea;
-    private RTextScrollPane sp;
+    private final RSyntaxTextArea textArea;
+    private final RTextScrollPane sp;
 
     public MyRSyntaxArea() {
         textArea = new RSyntaxTextArea();
