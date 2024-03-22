@@ -28,7 +28,7 @@ public class LineNumberedTextArea extends Component {
 
     private void initComponents() {
         textArea = new JTextArea();
-        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
+        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 20));
         textArea.setMargin(new Insets(10, 10, 10, 10));
 
         lineNumberArea = new JTextArea("1\n");
@@ -36,7 +36,7 @@ public class LineNumberedTextArea extends Component {
         lineNumberArea.setEditable(false);
         lineNumberArea.setFocusable(false);
         lineNumberArea.setMargin(new Insets(10, 10, 10, 10));
-        lineNumberArea.setFont(new Font("JetBrains Mono", Font.BOLD, 14));
+        lineNumberArea.setFont(new Font("JetBrains Mono", Font.BOLD, 20));
         lineNumberArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

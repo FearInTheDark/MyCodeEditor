@@ -24,7 +24,7 @@ public class MyRSyntaxArea extends RSyntaxTextArea {
         sp.getVerticalScrollBar().setPreferredSize(new Dimension(5, 0));
         sp.getHorizontalScrollBar().setUI(new CustomizeUI.MyScrollBarUI());
         sp.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 5));
-        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
+        textArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 20));
         textArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

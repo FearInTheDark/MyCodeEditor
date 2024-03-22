@@ -19,13 +19,13 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 
     public MyTreeCellRenderer() {
         ImageIcon folderII = new ImageIcon(folderPath);
-        Image folderImage = folderII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        Image folderImage = folderII.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         this.folderIcon = new ImageIcon(folderImage);
         ImageIcon folderExpandII = new ImageIcon(folderExpandPath);
-        Image folderExpandImage = folderExpandII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        Image folderExpandImage = folderExpandII.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         this.folderExpandIcon = new ImageIcon(folderExpandImage);
         ImageIcon fileII = new ImageIcon(filePath);
-        Image fileImage = fileII.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        Image fileImage = fileII.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
         fileIcon = new ImageIcon(fileImage);
     }
 //    private Image getScaledImage(Image srcImg, int w, int h){
@@ -50,7 +50,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
             String fileExtension = Features.getFileExtension(fileName);
             if (new File(specialFiles + fileExtension + ".png").exists()) {
                 ImageIcon specialFileIcon = new ImageIcon(specialFiles + fileExtension + ".png");
-                Image specialFileImage = specialFileIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+                Image specialFileImage = specialFileIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
                 setIcon(new ImageIcon(specialFileImage));
             } else {
                 setIcon(fileIcon);
@@ -61,11 +61,11 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
                 if (expanded) {
                     String fileFolderExpanded = specialFolders + "folder-" + value + "-open.png";
                     ImageIcon specialFolderIcon = new ImageIcon(fileFolderExpanded);
-                    Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+                    Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
                     setIcon(new ImageIcon(specialFolderImage));
                 } else {
                     ImageIcon specialFolderIcon = new ImageIcon(fileFolder);
-                    Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+                    Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
                     setIcon(new ImageIcon(specialFolderImage));
                 }
             } else if (expanded) setIcon(folderExpandIcon);

@@ -3,6 +3,7 @@ import CustomizeUI.MySplitPaneUI;
 import CustomizeUI.MyTreeCellRenderer;
 import Features.LineNumberedTextArea;
 import Features.MyRSyntaxArea;
+import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTree;
@@ -22,7 +23,7 @@ import java.nio.file.Paths;
 
 import static Features.Features.*;
 
-public class ListPath extends JFrame {
+public class ListPath extends JXFrame {
     private final String ROOT_FOLDER = "Learning Course";
     private final JXTree myTree;
     private DefaultMutableTreeNode root;
@@ -35,7 +36,7 @@ public class ListPath extends JFrame {
     private JXPanel fileExplorerFeatures, TextEditorFeatures, header, footer;
     private LineNumberedTextArea editorPane;
     private String textContent;
-    private int WIDTH = 1200, HEIGHT = 850;
+    private int WIDTH = 1500, HEIGHT = 1050;
     private File selectedFile;
     private Path rootPath;
     private TreePath[] selectedPaths;
@@ -78,7 +79,7 @@ public class ListPath extends JFrame {
         currentRightComponent = editorPane;
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
+        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 200);
         splitPane.setBorder(null);
 
         explorerPane = new JScrollPane(myTree);
@@ -89,17 +90,18 @@ public class ListPath extends JFrame {
         explorerPane.getVerticalScrollBar().setPreferredSize(new Dimension(5, 0));
         explorerPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 5));
         explorerPane.setMinimumSize(new Dimension(250, 0));
+        explorerPane.setBorder(null);
 
 
         splitPane.setLeftComponent(explorerPane);
         splitPane.setRightComponent(textPane);
 
         footer = new JXPanel(null);
-        footer.setBounds(0, HEIGHT - 80, WIDTH, 20);
+        footer.setBounds(0, HEIGHT - 100, WIDTH, 100);
         footer.setBackground(new Color(40, 44, 52));
 
         myTree.setCellRenderer(new MyTreeCellRenderer());
-        myTree.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        myTree.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         myTree.setLargeModel(true);
         myTree.setClosedIcon(null);
         myTree.addTreeSelectionListener(e -> {
@@ -298,7 +300,7 @@ public class ListPath extends JFrame {
 
     private void addJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         String[] fileItems = {"New", "Open", "Save", "Save As", "Exit"};
         String[] editItems = {"Undo", "Redo", "Cut", "Copy", "Paste", "Delete", "Find", "Replace"};
         String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen", "Switch Editor"};
@@ -319,7 +321,7 @@ public class ListPath extends JFrame {
     private JMenu getJMenu(String name, String[] items) {
         String fixedName = "<html> <span style='text-align: center;'>" + name + " </span> </html>";
         JMenu menu = new JMenu(fixedName);
-        menu.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        menu.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         for (String item : items) {
             JMenuItem menuItem = getjMenuItem(item);
             menu.add(menuItem);
@@ -329,7 +331,7 @@ public class ListPath extends JFrame {
 
     private JMenuItem getjMenuItem(String name) {
         JMenuItem item = new JMenuItem(name);
-        item.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        item.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
         item.setBorder(null);
         switch (name) {
@@ -416,8 +418,8 @@ public class ListPath extends JFrame {
         WIDTH = getWidth();
         HEIGHT = getHeight();
         header.setBounds(0, 0, WIDTH, 100);
-        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 180);
-        footer.setBounds(0, HEIGHT - 80, WIDTH, 20);
+        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 200);
+        footer.setBounds(0, HEIGHT - 100, WIDTH, 100);
     }
 
     private void setEditorContent(String textContent) {
