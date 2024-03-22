@@ -30,9 +30,11 @@ public class MyRSyntaxArea extends RSyntaxTextArea {
             public void keyPressed(KeyEvent e) {
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_EQUALS) {
                     textArea.setFont(textArea.getFont().deriveFont(textArea.getFont().getSize() + 1f));
+                    sp.getGutter().setLineNumberFont(textArea.getFont().deriveFont(textArea.getFont().getSize() - 2f));
                 }
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_MINUS) {
                     textArea.setFont(textArea.getFont().deriveFont(textArea.getFont().getSize() - 1f));
+                    sp.getGutter().setLineNumberFont(textArea.getFont().deriveFont(textArea.getFont().getSize() - 2f));
                 }
             }
         });
