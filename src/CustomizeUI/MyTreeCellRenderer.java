@@ -56,10 +56,10 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
                 setIcon(fileIcon);
             }
         } else {
-            String fileFolder = specialFolders + "folder-" + value + ".png";
+            String fileFolder = specialFolders + "folder-" + value.toString().toLowerCase() + ".png";
             if (new File(fileFolder).exists()) {
                 if (expanded) {
-                    String fileFolderExpanded = specialFolders + "folder-" + value + "-open.png";
+                    String fileFolderExpanded = specialFolders + "folder-" + value.toString().toLowerCase() + "-open.png";
                     ImageIcon specialFolderIcon = new ImageIcon(fileFolderExpanded);
                     Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
                     setIcon(new ImageIcon(specialFolderImage));

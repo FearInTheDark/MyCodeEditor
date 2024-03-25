@@ -1,3 +1,4 @@
+import CustomizeUI.MyAlertFrame;
 import CustomizeUI.MyScrollBarUI;
 import CustomizeUI.MySplitPaneUI;
 import CustomizeUI.MyTreeCellRenderer;
@@ -26,6 +27,8 @@ import static Features.Features.*;
 public class ListPath extends JXFrame {
     private final String ROOT_FOLDER = "Learning Course";
     private final JXTree myTree;
+    private final int DEFAULT_FONT_SIZE = 20;
+    private final Path rootPath;
     private DefaultMutableTreeNode root;
     private JSplitPane splitPane;
     private JScrollPane explorerPane;
@@ -38,7 +41,6 @@ public class ListPath extends JXFrame {
     private String textContent;
     private int WIDTH = 1500, HEIGHT = 1050;
     private File selectedFile;
-    private Path rootPath;
     private TreePath[] selectedPaths;
 
     public ListPath() throws Exception {
@@ -63,6 +65,13 @@ public class ListPath extends JXFrame {
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
                 resizeElements();
+            }
+        });
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) switchEditor();
             }
         });
         repaint();
@@ -101,7 +110,7 @@ public class ListPath extends JXFrame {
         footer.setBackground(new Color(40, 44, 52));
 
         myTree.setCellRenderer(new MyTreeCellRenderer());
-        myTree.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        myTree.setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
         myTree.setLargeModel(true);
         myTree.setClosedIcon(null);
         myTree.addTreeSelectionListener(e -> {
@@ -260,7 +269,7 @@ public class ListPath extends JXFrame {
         textPane.setContentType("text/html");
         textPane.setFocusable(false);
         textPane.setEditable(false);
-        String htmlString = "<html><body><h1 style='color: red; font-family: Segoe UI; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 20px; color: blue;'>This is a paragraph.</p></body></html>";
+        String htmlString = "<html><body><h1 style='color: red; font-family: Hey Comic; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 30px; color: blue; text-align: center; font-family: Hey Comic'>Double click on any file to open editor.</p></body></html>";
         textPane.setText(htmlString);
     }
 
@@ -296,6 +305,24 @@ public class ListPath extends JXFrame {
                 revalidate();
             }
         });
+        // Add key listener to the text area : Ctrl + S to save file
+        textComponent.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+                    if (selectedFile == null) {
+                        JOptionPane.showMessageDialog(null, "Please select a file to save", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    try {
+                        Files.writeString(selectedFile.toPath(), textComponent.getText());
+                        new MyAlertFrame("Success", "File saved successfully");
+                    } catch (IOException ioException) {
+                        System.err.println("Error: " + ioException.getMessage());
+                    }
+                }
+            }
+        });
     }
 
     private void addJMenuBar() {
@@ -321,7 +348,7 @@ public class ListPath extends JXFrame {
     private JMenu getJMenu(String name, String[] items) {
         String fixedName = "<html> <span style='text-align: center;'>" + name + " </span> </html>";
         JMenu menu = new JMenu(fixedName);
-        menu.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        menu.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         for (String item : items) {
             JMenuItem menuItem = getjMenuItem(item);
             menu.add(menuItem);
@@ -331,8 +358,11 @@ public class ListPath extends JXFrame {
 
     private JMenuItem getjMenuItem(String name) {
         JMenuItem item = new JMenuItem(name);
-        item.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        item.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
+        item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
+
+        item.setBackground(Color.WHITE);
         item.setBorder(null);
         switch (name) {
             case "About" ->
@@ -354,21 +384,23 @@ public class ListPath extends JXFrame {
                     resizeElements();
                 }
             });
-            case "Switch Editor" -> item.addActionListener(e -> {
-                if (currentRightComponent == syntaxTextArea) {
-                    textContent = syntaxTextArea.getTextArea().getText();
-                    splitPane.setRightComponent(editorPane.getScrollPane());
-                    editorPane.setTextArea(textContent);
-                    currentRightComponent = editorPane;
-                } else {
-                    textContent = editorPane.getTextArea().getText();
-                    splitPane.setRightComponent(syntaxTextArea.getSp());
-                    syntaxTextArea.setTextArea(textContent);
-                    currentRightComponent = syntaxTextArea;
-                }
-            });
+            case "Switch Editor" -> item.addActionListener(e -> switchEditor());
         }
         return item;
+    }
+
+    private void switchEditor() {
+        if (currentRightComponent == syntaxTextArea) {
+            textContent = syntaxTextArea.getTextArea().getText();
+            splitPane.setRightComponent(editorPane.getScrollPane());
+            editorPane.setTextArea(textContent);
+            currentRightComponent = editorPane;
+        } else {
+            textContent = editorPane.getTextArea().getText();
+            splitPane.setRightComponent(syntaxTextArea.getSp());
+            syntaxTextArea.setTextArea(textContent);
+            currentRightComponent = syntaxTextArea;
+        }
     }
 
     private void generateFileExplorerFeatures() {
@@ -379,7 +411,7 @@ public class ListPath extends JXFrame {
         ImageIcon icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\frame.png");
         title.setIcon(icon);
         title.setBounds(0, 0, 300, 100);
-        title.setFont(new Font("Comic Sans MS", Font.BOLD, 30));
+        title.setFont(new Font("Comic Sans MS", Font.BOLD, DEFAULT_FONT_SIZE + 10));
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setToolTipText("<html><span style='font-family: Segoe UI'>This is a tooltip</span></html>");
 
@@ -408,7 +440,7 @@ public class ListPath extends JXFrame {
         ImageIcon imageIcon = new ImageIcon(icon);
         title.setIcon(imageIcon);
         title.setBounds(0, 0, 300, 100);
-        title.setFont(new Font("Comic Sans MS", Font.BOLD, 30));
+        title.setFont(new Font("Comic Sans MS", Font.BOLD, DEFAULT_FONT_SIZE + 10));
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         TextEditorFeatures.add(title);

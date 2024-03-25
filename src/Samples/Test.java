@@ -15,6 +15,7 @@ public class Test {
 //        fileNames.sort(String::compareToIgnoreCase);
 //        fileNames.forEach(e -> System.out.print("\"" + e + "\", "));
 
+        // Read a JSON file from path = D:\Java Learning\Samples\FileExplorer\src\icons\icons_svg\icons.json and print the content to console
 
 
     }
