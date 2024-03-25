@@ -26,6 +26,7 @@ public class CommandExecutor {
                         return;
                     }
                     String command = textArea.getText().split("\n")[0]; // get the first line
+                    System.out.println(command);
                     textArea.append("\n");
 
                     try {

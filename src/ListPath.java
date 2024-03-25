@@ -1,7 +1,4 @@
-import CustomizeUI.MyAlertFrame;
-import CustomizeUI.MyScrollBarUI;
-import CustomizeUI.MySplitPaneUI;
-import CustomizeUI.MyTreeCellRenderer;
+import CustomizeUI.*;
 import Features.LineNumberedTextArea;
 import Features.MyRSyntaxArea;
 import org.jdesktop.swingx.JXFrame;
@@ -30,8 +27,9 @@ public class ListPath extends JXFrame {
     private final int DEFAULT_FONT_SIZE = 20;
     private final Path rootPath;
     private DefaultMutableTreeNode root;
-    private JSplitPane splitPane;
+    private JSplitPane splitPane, mainSplitPane;
     private JScrollPane explorerPane;
+    private MyTerminal terminal;
     private JTextPane textPane;
     private Object currentRightComponent;
     private MyRSyntaxArea syntaxTextArea;
@@ -84,16 +82,16 @@ public class ListPath extends JXFrame {
         generateEditorPane();
         generateTextPane();
         generateRSyntaxTextArea();
+        generateTerminal();
         this.header = fileExplorerFeatures;
         currentRightComponent = editorPane;
 
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 200);
-        splitPane.setBorder(null);
+        mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        mainSplitPane.setBounds(0, 100, WIDTH, HEIGHT - 200);
+        mainSplitPane.setBorder(null);
+
 
         explorerPane = new JScrollPane(myTree);
-        splitPane.setDividerSize(5);
-        splitPane.setUI(new MySplitPaneUI());
         explorerPane.getHorizontalScrollBar().setUI(new MyScrollBarUI());
         explorerPane.getVerticalScrollBar().setUI(new MyScrollBarUI());
         explorerPane.getVerticalScrollBar().setPreferredSize(new Dimension(5, 0));
@@ -102,8 +100,19 @@ public class ListPath extends JXFrame {
         explorerPane.setBorder(null);
 
 
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setMinimumSize(new Dimension(WIDTH, HEIGHT - 300));
+        splitPane.setBorder(null);
+        splitPane.setDividerSize(5);
+        splitPane.setUI(new MySplitPaneUI());
         splitPane.setLeftComponent(explorerPane);
         splitPane.setRightComponent(textPane);
+
+        mainSplitPane.setTopComponent(splitPane);
+        mainSplitPane.setBottomComponent(terminal.getScrollPane());
+        mainSplitPane.setUI(new MySplitPaneUI());
+        mainSplitPane.setDividerSize(5);
+//        mainSplitPane.setDividerLocation(HEIGHT - 300);
 
         footer = new JXPanel(null);
         footer.setBounds(0, HEIGHT - 100, WIDTH, 100);
@@ -252,13 +261,18 @@ public class ListPath extends JXFrame {
             }
         });
         add(header);
-        add(splitPane);
+        add(mainSplitPane);
         add(footer);
         addJMenuBar();
     }
 
 
+
     //These methods are used to generate the components of the UI
+    private void generateTerminal() {
+        terminal = new MyTerminal();
+        terminal.setDEFAULT_PATH("D:\\Java Learning\\Samples\\FileExplorer");
+    }
 
     private void generateTextPane() {
         textPane = new JTextPane();
@@ -450,7 +464,7 @@ public class ListPath extends JXFrame {
         WIDTH = getWidth();
         HEIGHT = getHeight();
         header.setBounds(0, 0, WIDTH, 100);
-        splitPane.setBounds(0, 100, WIDTH, HEIGHT - 200);
+        mainSplitPane.setBounds(0, 100, WIDTH, HEIGHT - 200);
         footer.setBounds(0, HEIGHT - 100, WIDTH, 100);
     }
 
