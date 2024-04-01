@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static Features.Features.*;
 
@@ -343,7 +344,7 @@ public class ListPath extends JXFrame {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         String[] fileItems = {"New", "Open", "Save", "Save As", "Exit"};
-        String[] editItems = {"Undo", "Redo", "Cut", "Copy", "Paste", "Delete", "Find", "Replace"};
+        String[] editItems = {"Undo", "Redo", "Cut", "Copy", "Paste", "Find", "Replace"};
         String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen", "Switch Editor"};
         String[] helpItems = {"About", "Contact"};
 
@@ -363,10 +364,11 @@ public class ListPath extends JXFrame {
         String fixedName = "<html> <span style='text-align: center;'>" + name + " </span> </html>";
         JMenu menu = new JMenu(fixedName);
         menu.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        for (String item : items) {
-            JMenuItem menuItem = getjMenuItem(item);
-            menu.add(menuItem);
-        }
+//        for (String item : items) {
+//            JMenuItem menuItem = getjMenuItem(item);
+//            menu.add(menuItem);
+//        }
+        Arrays.stream(items).map(this::getjMenuItem).forEach(menu::add);
         return menu;
     }
 
@@ -375,6 +377,9 @@ public class ListPath extends JXFrame {
         item.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
+
+        ImageIcon icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\JMenuItem_Icons\\" + name + ".png");
+        item.setIcon(icon);
 
         item.setBackground(Color.WHITE);
         item.setBorder(null);

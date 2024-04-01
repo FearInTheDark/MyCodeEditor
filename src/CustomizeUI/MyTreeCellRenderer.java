@@ -9,7 +9,7 @@ import java.io.File;
 
 public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     private final String folderPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder.png";
-    private final String folderExpandPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder-open.png";
+    private final String folderExpandPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\open.png";
     private final String filePath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\file.png";
     Icon folderIcon, folderExpandIcon;
     Icon fileIcon;
