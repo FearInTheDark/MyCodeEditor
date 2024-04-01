@@ -9,7 +9,7 @@ import java.io.File;
 
 public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
     private final String folderPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder.png";
-    private final String folderExpandPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder-open file.png";
+    private final String folderExpandPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder-open.png";
     private final String filePath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\file.png";
     Icon folderIcon, folderExpandIcon;
     Icon fileIcon;
@@ -59,7 +59,7 @@ public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
             String fileFolder = specialFolders + "folder-" + value.toString().toLowerCase() + ".png";
             if (new File(fileFolder).exists()) {
                 if (expanded) {
-                    String fileFolderExpanded = specialFolders + "folder-" + value.toString().toLowerCase() + "-open file.png";
+                    String fileFolderExpanded = specialFolders + "folder-" + value.toString().toLowerCase() + "-open.png";
                     ImageIcon specialFolderIcon = new ImageIcon(fileFolderExpanded);
                     Image specialFolderImage = specialFolderIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
                     setIcon(new ImageIcon(specialFolderImage));
