@@ -24,6 +24,7 @@ import static Features.Features.*;
 
 public class ListPath extends JXFrame {
     private final String ROOT_FOLDER = "Learning Course";
+    private final String ROOT_DISK = "D:";
     private final JXTree myTree;
     private int DEFAULT_FONT_SIZE = 20;
     private final Path rootPath;
@@ -43,11 +44,11 @@ public class ListPath extends JXFrame {
     private TreePath[] selectedPaths;
 
     public ListPath() throws Exception {
-        root = new DefaultMutableTreeNode("D:");
+        root = new DefaultMutableTreeNode(ROOT_DISK);
         myTree = new JXTree(root);
         selectedFile = null;
 
-        rootPath = Paths.get("D:", ROOT_FOLDER);
+        rootPath = Paths.get(ROOT_DISK, ROOT_FOLDER);
         listAllFiles(rootPath, root);
 
         setTitle("My File Explorer");
@@ -155,7 +156,7 @@ public class ListPath extends JXFrame {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     if (node == null) return;
                     JPopupMenu popupMenu = new JPopupMenu();
-                    popupMenu.setPreferredSize(new Dimension(100, 100));
+//                    popupMenu.setPreferredSize(new Dimension(100, 100));
                     JMenuItem open = getjMenuItem("Open");
                     open.addActionListener(e1 -> {
                         try {
