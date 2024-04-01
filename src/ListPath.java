@@ -25,7 +25,7 @@ import static Features.Features.*;
 public class ListPath extends JXFrame {
     private final String ROOT_FOLDER = "Learning Course";
     private final JXTree myTree;
-    private final int DEFAULT_FONT_SIZE = 20;
+    private int DEFAULT_FONT_SIZE = 20;
     private final Path rootPath;
     private DefaultMutableTreeNode root;
     private JSplitPane splitPane, mainSplitPane;
@@ -161,10 +161,12 @@ public class ListPath extends JXFrame {
                         try {
                             selectedFile = new File(getFullPath(node, ROOT_FOLDER));
                             if (selectedFile.isDirectory()) return;
+                            String fileExtension = getFileExtension(selectedFile.getName());
                             textContent = Files.readString(selectedFile.toPath());
                             if (splitPane.getRightComponent() == textPane) {
                                 splitPane.setRightComponent(editorPane.getScrollPane());
                             }
+                            syntaxTextArea.setSyntaxStyle(fileExtension);
                             setEditorContent(textContent);
                         } catch (IOException ioException) {
                             System.err.println("Error: " + ioException.getMessage());
@@ -343,7 +345,7 @@ public class ListPath extends JXFrame {
     private void addJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        String[] fileItems = {"New", "Open", "Save", "Save As", "Exit"};
+        String[] fileItems = {"New", "Open File", "Save", "Save As", "Exit"};
         String[] editItems = {"Undo", "Redo", "Cut", "Copy", "Paste", "Find", "Replace"};
         String[] viewItems = {"Zoom In", "Zoom Out", "Full Screen", "Switch Editor"};
         String[] helpItems = {"About", "Contact"};
@@ -404,6 +406,61 @@ public class ListPath extends JXFrame {
                 }
             });
             case "Switch Editor" -> item.addActionListener(e -> switchEditor());
+            case "Cut" -> item.addActionListener(e -> {
+                if (currentRightComponent == editorPane) {
+                    editorPane.getTextArea().cut();
+                } else {
+                    syntaxTextArea.getTextArea().cut();
+                }
+            });
+            case "Paste" -> item.addActionListener(e -> {
+                if (currentRightComponent == editorPane) {
+                    editorPane.getTextArea().paste();
+                } else {
+                    syntaxTextArea.getTextArea().paste();
+                }
+            });
+            case "Zoom In" -> item.addActionListener(e -> {
+                DEFAULT_FONT_SIZE += 2;
+                myTree.setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("File", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("Edit", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("View", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("Help", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                if (currentRightComponent == editorPane) {
+                    editorPane.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, editorPane.getTextArea().getFont().getSize() + 2));
+                } else {
+                    syntaxTextArea.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, syntaxTextArea.getTextArea().getFont().getSize() + 2));
+                }
+            });
+            case "Zoom Out" -> item.addActionListener(e -> {
+                DEFAULT_FONT_SIZE -= 2;
+                myTree.setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("File", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("Edit", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("View", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                getJMenu("Help", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
+                if (currentRightComponent == editorPane) {
+                    editorPane.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, editorPane.getTextArea().getFont().getSize() - 2));
+                } else {
+                    syntaxTextArea.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, syntaxTextArea.getTextArea().getFont().getSize() - 2));
+                }
+            });
+            case "Open" -> item.addActionListener(e -> {
+                try {
+                    selectedFile = new File(getFullPath((DefaultMutableTreeNode) myTree.getLastSelectedPathComponent(), ROOT_FOLDER));
+                    if (selectedFile.isDirectory()) return;
+                    String fileExtension = getFileExtension(selectedFile.getName());
+                    textContent = Files.readString(selectedFile.toPath());
+                    if (splitPane.getRightComponent() == textPane) {
+                        splitPane.setRightComponent(editorPane.getScrollPane());
+                    }
+                    syntaxTextArea.setSyntaxStyle(fileExtension);
+                    setEditorContent(textContent);
+                } catch (IOException ioException) {
+                    System.err.println("Error: " + ioException.getMessage());
+                }
+            });
         }
         return item;
     }

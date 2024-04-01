@@ -51,7 +51,7 @@ public class SVGToIconConverter {
 
         // Convert all svg files in icons_svg folder to folder fileIcons with size = 20x20 and folder path = D:\Java Learning\Samples\FileExplorer\src\icons\icons_svg
 
-        File file = new File("D:\\Learning Course\\svg");
+        File file = new File("D:\\Learning Course\\svg\\temp");
         File[] files = file.listFiles();
         assert files != null;
         for (File f : files) {
