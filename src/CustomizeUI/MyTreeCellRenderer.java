@@ -8,13 +8,13 @@ import java.awt.*;
 import java.io.File;
 
 public class MyTreeCellRenderer extends DefaultTreeCellRenderer {
-    private final String folderPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder.png";
-    private final String folderExpandPath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\folder-open.png";
-    private final String filePath = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\file.png";
+    private final String folderPath = "src\\icons\\folderIcons\\folder.png";
+    private final String folderExpandPath = "src\\icons\\folderIcons\\folder-open.png";
+    private final String filePath = "src\\icons\\file.png";
     Icon folderIcon, folderExpandIcon;
     Icon fileIcon;
-    private String specialFiles = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\fileIcons\\";
-    private String specialFolders = "D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\folderIcons\\";
+    private String specialFiles = "src\\icons\\fileIcons\\";
+    private String specialFolders = "src\\icons\\folderIcons\\";
 
 
     public MyTreeCellRenderer() {

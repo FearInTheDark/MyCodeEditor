@@ -26,8 +26,8 @@ public class ListPath extends JXFrame {
     private final String ROOT_FOLDER = "Learning Course";
     private final String ROOT_DISK = "D:";
     private final JXTree myTree;
-    private int DEFAULT_FONT_SIZE = 20;
     private final Path rootPath;
+    private int DEFAULT_FONT_SIZE = 20;
     private DefaultMutableTreeNode root;
     private JSplitPane splitPane, mainSplitPane;
     private JScrollPane explorerPane;
@@ -271,11 +271,11 @@ public class ListPath extends JXFrame {
     }
 
 
-
     //These methods are used to generate the components of the UI
     private void generateTerminal() {
         terminal = new MyTerminal();
-        terminal.setDEFAULT_PATH("D:\\Java Learning\\Samples\\FileExplorer");
+        // Get current path by ProcessBuilder
+        terminal.setDEFAULT_PATH(System.getProperty("user.dir"));
     }
 
     private void generateTextPane() {
