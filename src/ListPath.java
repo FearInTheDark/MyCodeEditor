@@ -27,8 +27,8 @@ public class ListPath extends JXFrame {
     private final String ROOT_DISK = "D:";
     private final JXTree myTree;
     private final Path rootPath;
+    private final DefaultMutableTreeNode root;
     private int DEFAULT_FONT_SIZE = 20;
-    private DefaultMutableTreeNode root;
     private JSplitPane splitPane, mainSplitPane;
     private JScrollPane explorerPane;
     private MyTerminal terminal;
@@ -103,7 +103,7 @@ public class ListPath extends JXFrame {
 
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setMinimumSize(new Dimension(WIDTH, HEIGHT - 300));
+        splitPane.setMinimumSize(new Dimension(WIDTH, HEIGHT / 2));
         splitPane.setBorder(null);
         splitPane.setDividerSize(5);
         splitPane.setUI(new MySplitPaneUI());
@@ -274,7 +274,6 @@ public class ListPath extends JXFrame {
     //These methods are used to generate the components of the UI
     private void generateTerminal() {
         terminal = new MyTerminal();
-        // Get current path by ProcessBuilder
         terminal.setDEFAULT_PATH(System.getProperty("user.dir"));
     }
 
@@ -287,7 +286,25 @@ public class ListPath extends JXFrame {
         textPane.setContentType("text/html");
         textPane.setFocusable(false);
         textPane.setEditable(false);
-        String htmlString = "<html><body><h1 style='color: red; font-family: Hey Comic; text-align: center; font-size: 50px'>Welcome</h1><p style='font-size: 30px; color: blue; text-align: center; font-family: Hey Comic'>Double click on any file to open editor.</p></body></html>";
+//        String htmlString = """
+//                <html>
+//                <body>
+//                <h1 style='color: red; font-family: Hey Comic; text-align: center; font-size: 50px'>Welcome</h1>
+//                <p style='font-size: 30px; color: blue; text-align: center; font-family: Hey Comic'>Double click on any file to open editor.</p>
+//                </body>
+//                </html>
+//                """;
+        String htmlString = """
+                <html>
+                <body'>
+                    <h1 style='color: red; font-family: Hey Comic; text-align: center; font-size: 50px'>Welcome</h1>
+                    <p style='font-size: 30px; color: blue; text-align: center; font-family: Hey Comic'>Double click on any file to open editor.</p>
+                    <div style='text-align: center;'>
+                        <img src='file:src\\icons\\astronaut.png'>
+                    </div>
+                </body>
+                </html>
+                """;
         textPane.setText(htmlString);
     }
 
@@ -323,7 +340,6 @@ public class ListPath extends JXFrame {
                 revalidate();
             }
         });
-        // Add key listener to the text area : Ctrl + S to save file
         textComponent.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -367,10 +383,6 @@ public class ListPath extends JXFrame {
         String fixedName = "<html> <span style='text-align: center;'>" + name + " </span> </html>";
         JMenu menu = new JMenu(fixedName);
         menu.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-//        for (String item : items) {
-//            JMenuItem menuItem = getjMenuItem(item);
-//            menu.add(menuItem);
-//        }
         Arrays.stream(items).map(this::getjMenuItem).forEach(menu::add);
         return menu;
     }
@@ -381,7 +393,7 @@ public class ListPath extends JXFrame {
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
         item.setPreferredSize(new Dimension(item.getPreferredSize().width + 20, item.getPreferredSize().height + 5));
 
-        ImageIcon icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\JMenuItem_Icons\\" + name + ".png");
+        ImageIcon icon = new ImageIcon("src\\icons\\JMenuItem_Icons\\" + name + ".png");
         item.setIcon(icon);
 
         item.setBackground(Color.WHITE);
@@ -429,9 +441,9 @@ public class ListPath extends JXFrame {
                 getJMenu("View", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
                 getJMenu("Help", new String[0]).setFont(new Font("Segoe UI", Font.PLAIN, DEFAULT_FONT_SIZE));
                 if (currentRightComponent == editorPane) {
-                    editorPane.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, editorPane.getTextArea().getFont().getSize() + 2));
+                    editorPane.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, DEFAULT_FONT_SIZE));
                 } else {
-                    syntaxTextArea.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, syntaxTextArea.getTextArea().getFont().getSize() + 2));
+                    syntaxTextArea.getTextArea().setFont(new Font("JetBrains Mono", Font.PLAIN, DEFAULT_FONT_SIZE));
                 }
             });
             case "Zoom Out" -> item.addActionListener(e -> {
@@ -485,7 +497,7 @@ public class ListPath extends JXFrame {
         fileExplorerFeatures.setBounds(0, 0, WIDTH, 100);
 
         title = new JXLabel("File Explorer");
-        ImageIcon icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\frame.png");
+        ImageIcon icon = new ImageIcon("src\\icons\\frame.png");
         title.setIcon(icon);
         title.setBounds(0, 0, 300, 100);
         title.setFont(new Font("Comic Sans MS", Font.BOLD, DEFAULT_FONT_SIZE + 10));
@@ -513,7 +525,7 @@ public class ListPath extends JXFrame {
         TextEditorFeatures.setBackground(new Color(0xadadad));
 
         title = new JXLabel("Text Editor");
-        Image icon = new ImageIcon("D:\\Java Learning\\Samples\\FileExplorer\\src\\icons\\Acode.png").getImage().getScaledInstance(100, 100, Image.SCALE_AREA_AVERAGING);
+        Image icon = new ImageIcon("src\\icons\\Acode.png").getImage().getScaledInstance(100, 100, Image.SCALE_AREA_AVERAGING);
         ImageIcon imageIcon = new ImageIcon(icon);
         title.setIcon(imageIcon);
         title.setBounds(0, 0, 300, 100);

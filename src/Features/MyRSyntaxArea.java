@@ -58,9 +58,15 @@ public class MyRSyntaxArea extends RSyntaxTextArea {
             case "c" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
             case "cpp" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);
             case "cs" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CSHARP);
-            case "html" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
             case "css" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CSS);
+            case "dtd" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_DTD);
+            case "f" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_FORTRAN);
+            case "groovy" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_GROOVY);
+            case "html" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_HTML);
             case "js" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+            case "json" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON);
+            case "jsp" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSP);
+            case "lua" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LUA);
             case "php" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PHP);
             case "py" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
             case "rb" -> textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_RUBY);

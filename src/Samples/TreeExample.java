@@ -1,38 +1,51 @@
 package Samples;
 
+import CustomizeUI.MyTreeCellRenderer;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.io.File;
 
-class TreeExample extends JFrame {
+public class TreeExample extends JFrame {
     private JTree tree;
 
     public TreeExample() {
-        //create the root node
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-        //create the child nodes
-        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
-        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
-        //add the child nodes to the root node
-        root.add(vegetableNode);
-        root.add(fruitNode);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //create the tree by passing in the root node
-        tree = new JTree(root);
-        add(tree);
+        File rootDirectory = new File("D:\\");
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("D:");
+        buildDirectoryTree(rootNode, rootDirectory);
 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("JTree Example");
-        this.setLocationRelativeTo(null);
-        this.setSize(300, 100);
-        this.setVisible(true);
+        File rootDirectory2 = new File("C:\\Users\\Vinh.Lap\\Downloads\\Documents\\");
+        DefaultMutableTreeNode rootNode2 = new DefaultMutableTreeNode(rootDirectory2.getName());
+        buildDirectoryTree(rootNode2, rootDirectory2);
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("This PC");
+        root.add(rootNode);
+        root.add(rootNode2);
+
+        JTree tree = new JTree(root);
+        tree.setCellRenderer(new MyTreeCellRenderer());
+        add(new JScrollPane(tree));
+
+        setSize(400, 500);
+        setVisible(true);
+    }
+
+    public static void buildDirectoryTree(DefaultMutableTreeNode node, File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File childFile : files) {
+                    DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(childFile.getName());
+                    node.add(childNode);
+                    buildDirectoryTree(childNode, childFile);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new TreeExample();
-            }
-        });
+        new TreeExample();
     }
 }
